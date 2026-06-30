@@ -11,6 +11,15 @@ export default function App({ Component, pageProps }) {
     checkAuth();
   }, []);
 
+  useEffect(() => {
+    // Auto-refresh page every 60 seconds (1 minute)
+    const interval = setInterval(() => {
+      router.replace(router.asPath);
+    }, 60000);
+
+    return () => clearInterval(interval);
+  }, [router]);
+
   async function checkAuth() {
     const res = await fetch('/api/auth');
     setIsAdmin(res.ok);
