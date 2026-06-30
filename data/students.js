@@ -1,11 +1,22 @@
-const students = [
-  { id: 1, name: "Ravi Kumar", gender: "Male" },
-  { id: 2, name: "Suresh Reddy", gender: "Male" },
-  { id: 3, name: "Anita Sharma", gender: "Female" },
-  { id: 4, name: "Priya Naidu", gender: "Female" },
-  { id: 5, name: "Manoj", gender: "Male" },
-  { id: 6, name: "Lakshmi", gender: "Female" },
-  { id: 7, name: "Kumar", gender: "Male" },
-  { id: 8, name: "Jyothi", gender: "Female" }
+export const students = [
+  { id: 1, name: 'Ravi Kumar', gender: 'Male' },
+  { id: 2, name: 'Suresh Reddy', gender: 'Male' },
+  { id: 3, name: 'Anita Sharma', gender: 'Female' },
+  { id: 4, name: 'Priya Naidu', gender: 'Female' },
+  { id: 5, name: 'Manoj Singh', gender: 'Male' },
+  { id: 6, name: 'Lakshmi Devi', gender: 'Female' },
+  { id: 7, name: 'Kumar Patel', gender: 'Male' },
+  { id: 8, name: 'Jyothi Rao', gender: 'Female' },
+  { id: 9, name: 'Arun Kumar', gender: 'Male' },
+  { id: 10, name: 'Neha Singh', gender: 'Female' },
+  { id: 11, name: 'Rohan Sharma', gender: 'Male' },
+  { id: 12, name: 'Divya Verma', gender: 'Female' },
+  { id: 13, name: 'Vikram Reddy', gender: 'Male' },
+  { id: 14, name: 'Pooja Gupta', gender: 'Female' },
+  { id: 15, name: 'Sanjay Kumar', gender: 'Male' },
+  { id: 16, name: 'Anjali Patel', gender: 'Female' },
+  { id: 17, name: 'Rahul Mehta', gender: 'Male' },
+  { id: 18, name: 'Sneha Das', gender: 'Female' },
+  { id: 19, name: 'Arjun Nair', gender: 'Male' },
+  { id: 20, name: 'Kavya Iyer', gender: 'Female' },
 ];
-export default students;

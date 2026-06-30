@@ -1,58 +1,48 @@
-import React, { useMemo, useState } from 'react';
-import studentsData from '../data/students';
-import { StudentList } from '../components/StudentList';
-import Link from 'next/link';
+import { useState, useMemo } from 'react';
+import { students } from '@/data/students';
 
-export default function Students(){
-  const [filter, setFilter] = useState('all');
-  const [query, setQuery] = useState('');
-  const filtered = useMemo(()=>{
-    let list = studentsData.slice();
-    if(filter==='boys') list = list.filter(s=>s.gender.toLowerCase().startsWith('m'));
-    if(filter==='girls') list = list.filter(s=>s.gender.toLowerCase().startsWith('f'));
-    if(query) list = list.filter(s=>s.name.toLowerCase().includes(query.toLowerCase()));
-    return list;
-  },[filter,query]);
+export default function Students() {
+  const [filter, setFilter] = useState('All');
+
+  const filtered = useMemo(() => {
+    if (filter === 'All') return students;
+    return students.filter((s) => s.gender === filter);
+  }, [filter]);
 
   return (
-    <div>
-      <header className="header">
-        <div>
-          <h1>VMHS Reunion — Batch 2006-2007</h1>
-          <div className="sub">VMHS school, NG Palle, Madanapalle — Aug 9, 2026</div>
+    <div className="space-y-6">
+      <div className="card">
+        <h2 className="text-3xl font-bold mb-4">Batch 2006-2007 Students</h2>
+        <div className="flex gap-2 flex-wrap">
+          {['All', 'Male', 'Female'].map((option) => (
+            <button
+              key={option}
+              onClick={() => setFilter(option)}
+              className={`px-4 py-2 rounded-lg transition font-medium ${
+                filter === option ? 'btn-primary' : 'btn-secondary'
+              }`}
+            >
+              {option} ({students.filter((s) => option === 'All' || s.gender === option).length})
+            </button>
+          ))}
         </div>
-        <nav className="nav">
-          <Link href="/">Home</Link>
-          <Link href="/students">Students</Link>
-          <Link href="/events">Events</Link>
-          <Link href="/gallery">Gallery</Link>
-        </nav>
-      </header>
+      </div>
 
-      <main className="container">
-        <div className="card">
-          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:10}}>
-            <h3>Students</h3>
-            <div className="muted">Batch 2006-2007</div>
-          </div>
-
-          <div className="controls" role="toolbar">
-            <div>
-              <button className={`btn ${filter==='all'?'active':''}`} onClick={()=>setFilter('all')}>All</button>
-              <button className={`btn ${filter==='boys'?'active':''}`} onClick={()=>setFilter('boys')}>Boys</button>
-              <button className={`btn ${filter==='girls'?'active':''}`} onClick={()=>setFilter('girls')}>Girls</button>
-            </div>
-            <div style={{marginLeft:'auto'}}>
-              <label className="muted" style={{marginRight:8}}>Search</label>
-              <input type="search" value={query} onChange={e=>setQuery(e.target.value)} placeholder="Search by name..." />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {filtered.map((student) => (
+          <div key={student.id} className="card">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-indigo-500 text-white flex items-center justify-center font-bold text-lg">
+                {student.name.split(' ')[0][0]}
+              </div>
+              <div>
+                <div className="font-bold text-lg">{student.name}</div>
+                <div className="text-sm text-gray-600">{student.gender}</div>
+              </div>
             </div>
           </div>
-
-          <StudentList students={filtered} />
-        </div>
-      </main>
-
-      <footer className="footer">© VMHS Reunion — Batch 2006-2007</footer>
+        ))}
+      </div>
     </div>
-  )
+  );
 }

@@ -1,30 +1,44 @@
-import cloudinary from '../../../lib/cloudinary';
-import jwt from 'jsonwebtoken';
+import cloudinary from '@/lib/cloudinary';
+import { getTokenFromCookie, verifyToken } from '@/lib/auth';
+import { readJSON, writeJSON } from '@/lib/storage';
 
-function verify(req){
-  const token = req.cookies && req.cookies.vmhs_token;
-  if(!token) return null;
-  try{ return jwt.verify(token, process.env.OWNER_PASSWORD); }catch(e){ return null; }
+function isAdmin(req) {
+  const token = getTokenFromCookie(req);
+  return token && verifyToken(token);
 }
 
-export default async function handler(req,res){
-  if(req.method === 'GET'){
-    try{
-      const result = await cloudinary.api.resources({ type: 'upload', prefix: 'vmhs_reunion/', max_results: 200 });
-      return res.status(200).json(result);
-    }catch(err){ console.error(err); return res.status(500).json({ error: 'failed' }); }
+export default async function handler(req, res) {
+  if (req.method === 'GET') {
+    try {
+      const result = await cloudinary.api.resources({ type: 'upload', prefix: 'vmhs_gallery/', max_results: 500 });
+      const resources = result.resources || [];
+      const likeData = readJSON('likes.json', {});
+      const commentData = readJSON('comments.json', {});
+      const enriched = resources.map((r) => ({
+        ...r,
+        likes: likeData[r.public_id] || 0,
+        comments: commentData[r.public_id] || [],
+      }));
+      return res.status(200).json({ resources: enriched });
+    } catch (err) {
+      console.error('Error fetching images:', err);
+      return res.status(500).json({ error: 'Failed to fetch images' });
+    }
   }
 
-  if(req.method === 'POST'){
-    // owner-only
-    const v = verify(req);
-    if(!v) return res.status(401).json({ error: 'unauthorized' });
+  if (req.method === 'POST') {
+    if (!isAdmin(req)) return res.status(401).json({ error: 'Unauthorized' });
+
     const { dataUrl, name } = req.body || {};
-    if(!dataUrl) return res.status(400).json({ error: 'missing data' });
-    try{
-      const upload = await cloudinary.uploader.upload(dataUrl, { folder: 'vmhs_reunion' });
+    if (!dataUrl) return res.status(400).json({ error: 'Missing data' });
+
+    try {
+      const upload = await cloudinary.uploader.upload(dataUrl, { folder: 'vmhs_gallery' });
       return res.status(200).json(upload);
-    }catch(err){ console.error(err); return res.status(500).json({ error: 'upload failed' }); }
+    } catch (err) {
+      console.error('Upload error:', err);
+      return res.status(500).json({ error: 'Upload failed' });
+    }
   }
 
   res.setHeader('Allow', 'GET,POST');
