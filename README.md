@@ -1,161 +1,112 @@
-# VMHS Reunion 2026-2027 — GRT Dashboard
+# GRT 2006–2007 · Vivekananda Municipal High School — Reunion Dashboard
 
-A full-featured Next.js dashboard for the Vivekananda Municipal High School batch 2006-2007 reunion event.
+A single-file, mobile-first web dashboard for the GRT reunion of batch **2006–2007**.
 
-## Features
+- **Event:** Aug 9, 2026 · 9:00 PM onwards (ends same day)
+- **Venue:** VMHS School, NG Palle, Madanapalle
+- **Admin login (top-right):** `Messi` / `Fifa2026`
 
-✅ **Home Page** — Live countdown timer (days, hours, minutes, seconds)  
-✅ **Mobile-First UI** — Fully responsive design for all devices  
-✅ **Admin Authentication** — Secure login (Messi / Fifa2026)  
-✅ **Gallery** — Public view images; admin upload/delete; like & comment system for all users  
-✅ **Students** — Filter by All / Boys / Girls  
-✅ **Events** — View-only for public; admin can add/edit/delete events  
-✅ **Persistent Storage** — JSON-based storage + Cloudinary for images  
-✅ **Production-Ready** — Deploy on Vercel with automated builds  
+## What it does
 
-## Event Details
+| Tab | Everyone (view-only) | Admin (logged in) |
+|-----|----------------------|-------------------|
+| **Home** | Live countdown (days/hrs/min/sec), event details, venue, map link | same |
+| **Gallery** | View photos, ❤️ like, 💬 comment, 📥 download | + upload & delete photos, delete comments |
+| **Students** | Filter **All / Boys / Girls** (default All) | + add, ✏️ edit & 🗑 delete students (including the pre-loaded class list) |
+| **Events** | View event list | + add / edit / delete events |
 
-- **Event Name:** GRT - Grand Reunion & Get Together
-- **Batch:** 2006-2007
-- **School:** Vivekananda Municipal High School
-- **Location:** VMHS school, NG Palle, Madanapalle
-- **Date:** August 9, 2026
-- **Time:** 9:00 PM onwards
+Works in **any mobile or desktop browser** — just open the URL. Once hosted on Firebase it runs **24/7** with data shared live across everyone's phones.
 
-## Setup & Deployment
+## Project structure (one file per tab)
 
-### Prerequisites
-
-1. Create a free Cloudinary account (for image storage)
-   - Sign up at https://cloudinary.com/
-   - Copy your Cloud name, API Key, and API Secret from Account Details
-
-2. Node.js 18+ installed locally (for testing)
-
-### Environment Variables
-
-You must set these in Vercel before deploying:
-
-- `CLOUDINARY_CLOUD_NAME` — Your Cloudinary cloud name
-- `CLOUDINARY_API_KEY` — Your Cloudinary API key
-- `CLOUDINARY_API_SECRET` — Your Cloudinary API secret
-- `OWNER_PASSWORD` — Admin password (default: Fifa2026)
-
-### Deploy to Vercel
-
-1. Go to https://vercel.com and log in
-2. Click "New Project" → "Import Git Repository"
-3. Select `ggova70-ship-it/vmhs-reunion` repository
-4. In **Environment Variables** section, add:
-   - CLOUDINARY_CLOUD_NAME
-   - CLOUDINARY_API_KEY
-   - CLOUDINARY_API_SECRET
-   - OWNER_PASSWORD
-5. Click "Deploy"
-6. Once deployment completes ("Ready"), you'll get a public `.vercel.app` URL
-
-### Test Locally (Optional)
-
-```bash
-# Clone and install
-git clone https://github.com/ggova70-ship-it/vmhs-reunion
-cd vmhs-reunion
-npm install
-
-# Create .env.local file
-cat > .env.local << EOF
-CLOUDINARY_CLOUD_NAME=your_cloud_name
-CLOUDINARY_API_KEY=your_api_key
-CLOUDINARY_API_SECRET=your_api_secret
-OWNER_PASSWORD=Fifa2026
-EOF
-
-# Run dev server
-npm run dev
-
-# Open http://localhost:3000
+```
+grt-dashboard/
+├── index.html          small shell: header, bottom nav, shared modals
+├── css/styles.css      all styling
+└── js/
+    ├── config.js       ← EDIT: Firebase keys, admin creds, event date
+    ├── core.js         data layer, login, navigation, helpers
+    ├── home.js         Home tab (countdown + details)
+    ├── gallery.js      Gallery tab (upload / like / comment)
+    ├── students.js     Students tab (+ pre-loaded class list)
+    ├── events.js       Events tab
+    └── app.js          boots everything
 ```
 
-## Usage
-
-### Public Users
-- View the home page with live countdown
-- Browse students (filter by All/Boys/Girls)
-- View events
-- View gallery images
-- Like and comment on gallery images
-
-### Admin Users
-
-1. Click "Login" button (top-right)
-2. Enter credentials:
-   - Username: `Messi`
-   - Password: `Fifa2026` (or your OWNER_PASSWORD env var)
-3. Admin access includes:
-   - Upload images to gallery (max 10 images)
-   - Delete images
-   - Add, edit, and delete events
-
-### Gallery
-
-- **Public:** Can view all images, like (❤️), and comment (💬)
-- **Admin:** Can upload and delete images
-- **Max images:** 10 (enforced on both client and server)
-- **Storage:** Cloudinary (automatically resized and optimized)
-
-## API Endpoints
-
-- `POST /api/login` — Admin login
-- `POST /api/logout` — Admin logout
-- `GET /api/auth` — Check admin session
-- `GET /api/images` — List all images with likes/comments
-- `POST /api/images` — Upload image (admin only)
-- `DELETE /api/images/:id` — Delete image (admin only)
-- `POST /api/likes/:imageId` — Like an image
-- `POST /api/comments/:imageId` — Add comment to image
-- `GET /api/events` — List all events
-- `POST /api/events` — Create event (admin only)
-- `PUT /api/events/:id` — Update event (admin only)
-- `DELETE /api/events/:id` — Delete event (admin only)
-
-## Security Notes
-
-- Admin password is stored server-side only (in OWNER_PASSWORD env var)
-- Credentials are never embedded in client JavaScript
-- HTTP-only cookies used for session management
-- Images are publicly served via Cloudinary CDN
-- All admin operations require valid authentication token
-
-## Troubleshooting
-
-### "404: DEPLOYMENT_NOT_FOUND"
-- Ensure environment variables are set in Vercel Project Settings
-- Trigger a redeploy from Vercel dashboard
-- Check deployment logs for build errors
-
-### Images not uploading
-- Verify Cloudinary credentials in env vars
-- Check Cloudinary account storage limits
-- Ensure you're logged in as admin
-
-### Comments/likes not persisting
-- Data is stored in JSON files in the `/data` directory
-- On Vercel's serverless functions, this storage is ephemeral
-- For permanent storage, consider upgrading to a database (Firebase, Supabase, etc.)
-
-## Future Enhancements
-
-- Add persistent database (Firebase, PostgreSQL) for likes/comments
-- Email notifications for admin events
-- Image tagging and filters
-- Photo download functionality
-- RSVP system for events
-- Social media sharing
-
-## Support
-
-For issues or questions, open an issue on the GitHub repository.
+Each tab builds its own markup and logic inside its file, so to change a tab you only open that one file.
 
 ---
 
-**Made with ❤️ for VMHS Batch 2006-2007**
+## Run it locally right now (demo mode)
+Just double-click `index.html`. It opens in your browser and works fully — but in **local demo mode** data is saved only on that one device. To make data shared & always-on, do the Firebase steps below.
+
+---
+
+## Setup for shared, 24/7 data (Firebase — free)
+
+### 1. Create a Firebase project
+1. Go to <https://console.firebase.google.com> → **Add project** → name it (e.g. `grt-2006`). Disable Analytics (optional) → **Create project**.
+
+### 2. Create the database
+1. Left menu → **Build → Firestore Database** → **Create database**.
+2. Choose a location (e.g. `asia-south1` Mumbai) → start in **Production mode** → Enable.
+3. Open the **Rules** tab, paste the contents of **`firestore.rules`** (in this folder) and **Publish**.
+   > These rules mean: **anyone can view** everything; **only the signed-in admin can add/delete** photos, students and events; **viewers may only like/comment** on photos (nothing else). This removes Firebase's "public database" warning.
+
+### 2b. Turn on admin login (Firebase Authentication)
+The rules above require a real admin account. Set one up:
+1. Left menu → **Build → Authentication** → **Get started**.
+2. **Sign-in method** tab → enable **Email/Password** → Save.
+3. **Users** tab → **Add user**:
+   - Email: `admin@grtvmhs.app`  (must match `ADMIN.email` in `js/config.js`)
+   - Password: `Fifa2026`  (or your choice — this is the real admin password)
+   - **Add user**.
+4. In the app, log in by typing username **`Messi`** and that password. (Change the username in `js/config.js` → `ADMIN.user`; change the email/password pair here + in `config.js`.)
+
+### 3. Get your config keys
+1. Project **⚙ Settings** → **General** → scroll to **Your apps** → click the **Web `</>`** icon.
+2. Register app (any nickname, **don't** enable Hosting checkbox here) → it shows a `firebaseConfig = { ... }` block. Copy those values.
+
+### 4. Paste keys into the app
+Open `js/config.js` and fill in this block:
+```js
+const FIREBASE_CONFIG = {
+  apiKey: "....",
+  authDomain: "your-app.firebaseapp.com",
+  projectId: "your-app",
+  storageBucket: "your-app.appspot.com",
+  messagingSenderId: "....",
+  appId: "...."
+};
+```
+Save. The ⚠️ demo-mode banner disappears and data is now shared & live.
+
+---
+
+## Publish so the URL works 24/7 anywhere
+
+### Option A — Firebase Hosting (recommended, free, custom URL)
+Install Node.js first, then in this folder:
+```
+npm install -g firebase-tools
+firebase login
+firebase init hosting      # → use existing project, set public dir to ".", single-page app: No, don't overwrite index.html
+firebase deploy
+```
+You get a live URL like `https://grt-2006.web.app` — open it on any phone, share it freely. Always online.
+
+### Option B — Netlify Drop (no install, drag & drop)
+Go to <https://app.netlify.com/drop> and drag this folder in. You get an instant public URL.
+
+### Option C — GitHub Pages
+Push this folder to a GitHub repo → repo **Settings → Pages → Deploy from branch → main / root**. URL: `https://<user>.github.io/<repo>/`.
+
+---
+
+## Notes
+- **Images** are auto-resized in the browser (~1100px, JPEG) and stored in Firestore, so no paid Firebase Storage is needed — stays on the free Spark plan.
+- **Photo downloads:** anyone can tap the 📥 button on a gallery photo (thumbnail or full-screen viewer) to save it to their device.
+- **Editing students:** the first time an admin logs in, the built-in class list is copied into the database once (tracked by a `settings/studentsSeeded` flag — this works correctly even if you'd already added students before), so every student — including the original 139 — gets an editable/deletable record. After that, Students always loads from the database.
+- **Change credentials:** edit `const ADMIN = { user: "Messi", pass: "Fifa2026" }` in `js/config.js`.
+- **Change event date:** edit `EVENT_START` / `EVENT_END` in `js/config.js`.
+- Free Firestore limits (50k reads / 20k writes per day) are far above what a reunion needs.
